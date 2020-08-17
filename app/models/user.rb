@@ -4,31 +4,27 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  #フォローする側のUserから見て、フォローされる側のUserを(中間テーブルを介して)集める。なので親はfollowing_id(フォローする側)
+  has_many :active_relationships, class_name: "Relationship", foreign_key: :following_id
+  # 中間テーブルを介して「follower」モデルのUser(フォローされた側)を集めることを「followings」と定義
+  has_many :followings, through: :active_relationships, source: :follower
+  # ========================================================================================
+
+  # ====================自分がフォローされるユーザーとの関連 ===================================
+  #フォローされる側のUserから見て、フォローしてくる側のUserを(中間テーブルを介して)集める。なので親はfollower_id(フォローされる側)
+  has_many :passive_relationships, class_name: "Relationship", foreign_key: :follower_id
+  # 中間テーブルを介して「following」モデルのUser(フォローする側)を集めることを「followers」と定義
+  has_many :followers, through: :passive_relationships, source: :following
+
+   def followed_by?(user)
+    # 今自分(引数のuser)がフォローしようとしているユーザー(レシーバー)がフォローされているユーザー(つまりpassive)の中から、引数に渡されたユーザー(自分)がいるかどうかを調べる
+    passive_relationships.find_by(following_id: user.id).present?
+  end
+
   has_many :books
   has_many :favorites, dependent: :destroy
   has_many :book_comments, dependent: :destroy
   attachment :profile_image, destroy: false
-
-  has_many :relationships,foreign_key: "follower_id", class_name: "Relationship",  dependent: :destroy
-  has_many :followings, through: :relationships
-  has_many :relationships,foreign_key: "following_id",class_name: "Relationship", dependent: :destroy
-  has_many :followers, through: :relationships
-
-  #すでにフォロー済みであればture返す
-  def following?(other_user)
-    self.followings.include?(other_user)
-  end
-
-  #ユーザーをフォローする
-  def follow(other_user)
-    self.following_relationships.create(following_id: other_user.id)
-  end
-
-  #ユーザーのフォローを解除する
-  def unfollow(other_user)
-    self.following_relationships.find_by(following_id: other_user.id).destroy
-  end
-
   #バリデーションは該当するモデルに設定する。エラーにする条件を設定できる。
   validates :name, length: {maximum: 20, minimum: 2}
   validates :introduction, length: {maximum: 50}
