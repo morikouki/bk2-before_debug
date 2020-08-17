@@ -46,21 +46,19 @@
 						<% if book.favorited_by?(current_user) %>
 						<li>
 						  <%= link_to book_favorites_path(book), method: :delete do %>
-						    <i class="fa fa-heart" aria-hidden="true" style="color: #a9a9a9;"></i>
-						    <%= book.favorites.count %>
+						    <span class="glyphicon glyphicon-heart"><%= book.favorites.count %></span>
 						  <% end %>
 						</li>
 						<% else %>
 						<li>
 						  <%= link_to book_favorites_path(book), method: :post do %>
-						    <i class="fa fa-heart-o" aria-hidden="true"></i>
-						    <%= book.favorites.count %>
+						    <span class="glyphicon glyphicon-heart-empty"><%= book.favorites.count %></span>
 						  <% end %>
 						</li>
 						<% end %>
 					</td>
 					<td>
-						コメント数：<a href="#comments"><%= book.book_comments.count %>
+						コメント数：<%= book.book_comments.count %>
 					</td>
 				</tr>
 				<% end %>
