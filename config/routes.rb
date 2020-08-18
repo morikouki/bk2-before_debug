@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     get :follows, on: :member # 追加
     get :followers, on: :member # 追加
   end
+  get 'searchs' => 'search#index', as: 'searchs'
   resources :books do
   	resource :favorites, only: [:create, :destroy]
     resources :book_comments, only: [:create, :destroy]

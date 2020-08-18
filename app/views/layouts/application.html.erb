@@ -31,9 +31,18 @@
             <% end %>
           </ul>
         </nav>
-
       </div>
     </header>
+    <% if current_user %>
+        <div class="serch-box">
+          <%= form_tag searchs_path, :method => 'get' do %> <%#　projects_pathはモデル名で読みかえること %>
+            <p>
+              <%= text_field_tag :search, params[:search] %>
+              <%= submit_tag "Search", :name => nil %>
+            </p>
+          <% end %>
+        </div>
+    <% end %>
 
     <div class="container">
       <p id="notice"><%= notice %></p>
