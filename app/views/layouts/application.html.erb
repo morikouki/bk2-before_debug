@@ -35,11 +35,11 @@
     </header>
     <% if current_user %>
         <div class="serch-box">
-          <%= form_tag searchs_path, :method => 'get' do %> <%#　projects_pathはモデル名で読みかえること %>
-            <p>
-              <%= text_field_tag :search, params[:search] %>
-              <%= submit_tag "Search", :name => nil %>
-            </p>
+          <%= form_tag(searchs_path, :method => 'get') do %>
+              <%= text_field_tag :search %>
+              <%= select_tag(:option, options_for_select([["User", "1"],["Book","2"]]))%>
+              <%= select_tag(:choice, options_for_select([["完全一致", "1" ],["前方一致", "2" ],["後方一致", "3" ],["部分一致", "4" ]])) %>
+              <%= submit_tag '検索' %>
           <% end %>
         </div>
     <% end %>

@@ -16,23 +16,31 @@ class User < ApplicationRecord
   # 中間テーブルを介して「following」モデルのUser(フォローする側)を集めることを「followers」と定義
   has_many :followers, through: :passive_relationships, source: :following
 
-   def followed_by?(user)
+  def followed_by?(user)
     # 今自分(引数のuser)がフォローしようとしているユーザー(レシーバー)がフォローされているユーザー(つまりpassive)の中から、引数に渡されたユーザー(自分)がいるかどうかを調べる
     passive_relationships.find_by(following_id: user.id).present?
-  end
-
-  def self.search(search) #self.でクラスメソッドとしている
-    if search # Controllerから渡されたパラメータが!= nilの場合は、titleカラムを部分一致検索
-      User.where(['name LIKE ?', "%#{search}%"])
-    else
-      User.all #全て表示。
-    end
   end
 
   has_many :books
   has_many :favorites, dependent: :destroy
   has_many :book_comments, dependent: :destroy
   attachment :profile_image, destroy: false
+
+  def User.search(search, user_or_post, how_search)
+        if user_or_post == "1"
+            if how_search == "4"
+                    User.where(['name LIKE ?', "%#{search}%"])
+            elsif how_search == "3"
+                    User.where(['name LIKE ?', "%#{search}"])
+            elsif how_search == "2"
+                    User.where(['name LIKE ?', "#{search}%"])
+            elsif how_search == "1"
+                    User.where(['name LIKE ?', "#{search}"])
+            else
+                    User.all
+            end
+         end
+    end
   #バリデーションは該当するモデルに設定する。エラーにする条件を設定できる。
   validates :name, length: {maximum: 20, minimum: 2}
   validates :introduction, length: {maximum: 50}
