@@ -1,6 +1,6 @@
 <h1>Follower Users</h1>
-<% if @users.followings.nil? %>
-	<p>フォローしてる人はいません</p>
+<% if @users.empty? %>
+	<p>ユーザーはいません</p>
 <% else %>
 	<table class="table">
 		<thead>
